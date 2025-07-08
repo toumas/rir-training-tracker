@@ -1,0 +1,5 @@
+{
+    "scripts": {
+        "dev": "cd rir-training-tracker && npm run dev"
+    }
+}

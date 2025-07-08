@@ -1,0 +1,9 @@
+{
+    "workbench.colorCustomizations": {
+        "diffEditor.insertedTextBackground": "#0b3c0b",
+        "diffEditor.removedTextBackground": "#f8d4d4",
+        "activityBar.background": "#4A2312",
+        "titleBar.activeBackground": "#673119",
+        "titleBar.activeForeground": "#FEFCFA"
+    }
+}
