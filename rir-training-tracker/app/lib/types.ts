@@ -27,3 +27,17 @@ export interface ExerciseTemplate {
   equipment?: string;
   instructions?: string;
 }
+
+export interface Cycle {
+  id: string;
+  name: string;
+  startDate: string;
+  weeks: {
+    week1: string[]; // Array of workout IDs
+    week2: string[];
+    week3: string[];
+    week4: string[];
+    deload: string[];
+  };
+  notes?: string;
+}

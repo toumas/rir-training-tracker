@@ -1,8 +1,9 @@
-import { Workout, ExerciseTemplate } from './types';
+import { Workout, ExerciseTemplate, Cycle } from './types';
 import { initialExercises } from './data';
 
 const WORKOUTS_KEY = 'rir-workouts';
 const EXERCISES_KEY = 'rir-exercises';
+const CYCLES_KEY = 'rir-cycles';
 
 // Workout storage functions
 export const getWorkouts = (): Workout[] => {
@@ -105,4 +106,52 @@ export const formatDate = (date: Date): string => {
 
 export const parseDate = (dateString: string): Date => {
   return new Date(dateString);
+};
+
+// Cycle storage functions
+export const getCycles = (): Cycle[] => {
+  if (typeof window === 'undefined') return [];
+  
+  try {
+    const stored = localStorage.getItem(CYCLES_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error('Error getting cycles:', error);
+    return [];
+  }
+};
+
+export const saveCycle = (cycle: Cycle): void => {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    const cycles = getCycles();
+    const existingIndex = cycles.findIndex(c => c.id === cycle.id);
+    
+    if (existingIndex >= 0) {
+      cycles[existingIndex] = cycle;
+    } else {
+      cycles.push(cycle);
+    }
+    
+    localStorage.setItem(CYCLES_KEY, JSON.stringify(cycles));
+  } catch (error) {
+    console.error('Error saving cycle:', error);
+  }
+};
+
+export const deleteCycle = (id: string): void => {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    const cycles = getCycles();
+    const filtered = cycles.filter(c => c.id !== id);
+    localStorage.setItem(CYCLES_KEY, JSON.stringify(filtered));
+  } catch (error) {
+    console.error('Error deleting cycle:', error);
+  }
+};
+
+export const getCycleById = (id: string): Cycle | undefined => {
+  return getCycles().find(c => c.id === id);
 };
