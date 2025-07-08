@@ -326,7 +326,7 @@ export default function CycleAnalytics({ cycle }: CycleAnalyticsProps) {
                   {weekLabels[weekKey]}
                 </h4>
                 
-                {workouts.map((workout, workoutIndex) => (
+                {workouts.map((workout) => (
                   <div key={workout.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-center mb-3">
                       <h5 className="text-lg font-medium text-gray-900">{workout.name}</h5>
@@ -335,7 +335,7 @@ export default function CycleAnalytics({ cycle }: CycleAnalyticsProps) {
                       </span>
                     </div>
                     
-                    {workout.exercises.map((exercise, exerciseIndex) => (
+                    {workout.exercises.map((exercise) => (
                       <div key={exercise.id} className="mb-4 last:mb-0">
                         <h6 className="text-md font-medium text-gray-900 mb-2">
                           {exercise.name} <span className="text-sm text-gray-700">({exercise.muscleGroup})</span>

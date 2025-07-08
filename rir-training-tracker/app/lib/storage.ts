@@ -1,8 +1,7 @@
 import { Workout, ExerciseTemplate, Cycle } from './types';
-import { initialExercises } from './data';
+import exercisesData from './exercises.json';
 
 const WORKOUTS_KEY = 'rir-workouts';
-const EXERCISES_KEY = 'rir-exercises';
 const CYCLES_KEY = 'rir-cycles';
 
 // Workout storage functions
@@ -55,44 +54,11 @@ export const getWorkoutById = (id: string): Workout | undefined => {
 
 // Exercise template storage functions
 export const getExerciseTemplates = (): ExerciseTemplate[] => {
-  if (typeof window === 'undefined') return initialExercises;
-  
-  try {
-    const stored = localStorage.getItem(EXERCISES_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    } else {
-      // Initialize with default exercises
-      localStorage.setItem(EXERCISES_KEY, JSON.stringify(initialExercises));
-      return initialExercises;
-    }
-  } catch (error) {
-    console.error('Error getting exercise templates:', error);
-    return initialExercises;
-  }
-};
-
-export const saveExerciseTemplate = (exercise: ExerciseTemplate): void => {
-  if (typeof window === 'undefined') return;
-  
-  try {
-    const exercises = getExerciseTemplates();
-    const existingIndex = exercises.findIndex(e => e.id === exercise.id);
-    
-    if (existingIndex >= 0) {
-      exercises[existingIndex] = exercise;
-    } else {
-      exercises.push(exercise);
-    }
-    
-    localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
-  } catch (error) {
-    console.error('Error saving exercise template:', error);
-  }
+  return exercisesData as ExerciseTemplate[];
 };
 
 export const getExerciseTemplateById = (id: string): ExerciseTemplate | undefined => {
-  return getExerciseTemplates().find(e => e.id === id);
+  return exercisesData.find(e => e.id === id) as ExerciseTemplate | undefined;
 };
 
 // Utility functions
