@@ -146,7 +146,7 @@ export default function WorkoutForm({ workout, onSave, onCancel }: WorkoutFormPr
               value={workoutName}
               onChange={(e) => setWorkoutName(e.target.value)}
               placeholder="e.g., Push Day, Upper Body, etc."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
               required
             />
           </div>
@@ -159,7 +159,7 @@ export default function WorkoutForm({ workout, onSave, onCancel }: WorkoutFormPr
               id="workoutDate"
               value={workoutDate}
               onChange={(e) => setWorkoutDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
               required
             />
           </div>
@@ -176,7 +176,7 @@ export default function WorkoutForm({ workout, onSave, onCancel }: WorkoutFormPr
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Add any notes about this workout..."
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
           />
         </div>
 
@@ -191,9 +191,8 @@ export default function WorkoutForm({ workout, onSave, onCancel }: WorkoutFormPr
               if (e.target.value) {
                 addExercise(e.target.value);
                 e.target.value = '';
-              }
-            }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              }              }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
           >
             <option value="">Select an exercise to add...</option>
             {exerciseTemplates.map(template => (
@@ -242,7 +241,7 @@ export default function WorkoutForm({ workout, onSave, onCancel }: WorkoutFormPr
                       value={set.reps}
                       onChange={(e) => updateSet(exercise.id, set.id, 'reps', parseInt(e.target.value) || 0)}
                       min="1"
-                      className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                     />
                     <input
                       type="number"
@@ -250,7 +249,7 @@ export default function WorkoutForm({ workout, onSave, onCancel }: WorkoutFormPr
                       onChange={(e) => updateSet(exercise.id, set.id, 'weight', parseFloat(e.target.value) || 0)}
                       min="0"
                       step="0.5"
-                      className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                     />
                     <div className="flex items-center space-x-1">
                       <select
