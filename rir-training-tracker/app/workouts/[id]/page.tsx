@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Workout } from '../../lib/types';
 import { getWorkoutById, deleteWorkout, saveWorkout } from '../../lib/storage';
+import { useWeightDisplay } from '../../lib/unitConversion';
 import WorkoutForm from '../../components/WorkoutForm';
 
 export default function WorkoutDetailPage() {
@@ -13,6 +14,7 @@ export default function WorkoutDetailPage() {
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
+  const { formatWeight, unit } = useWeightDisplay();
 
   useEffect(() => {
     if (params.id) {
@@ -185,8 +187,8 @@ export default function WorkoutDetailPage() {
             <div className="text-sm text-gray-600">Total Sets</div>
           </div>
           <div className="bg-gray-50 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-gray-900">{getTotalVolume(workout).toLocaleString()}</div>
-            <div className="text-sm text-gray-600">Total Volume (lbs)</div>
+            <div className="text-2xl font-bold text-gray-900">{formatWeight(getTotalVolume(workout), 'kg').split(' ')[0]}</div>
+            <div className="text-sm text-gray-600">Total Volume ({unit})</div>
           </div>
           <div className="bg-gray-50 rounded-lg p-4 text-center">
             <div className={`inline-block px-3 py-1 rounded-full text-lg font-bold ${getRIRColor(avgRIR)}`}>
@@ -219,7 +221,7 @@ export default function WorkoutDetailPage() {
                     <tr className="border-b border-gray-200">
                       <th className="text-left py-2 text-sm font-medium text-gray-700">Set</th>
                       <th className="text-left py-2 text-sm font-medium text-gray-700">Reps</th>
-                      <th className="text-left py-2 text-sm font-medium text-gray-700">Weight (lbs)</th>
+                      <th className="text-left py-2 text-sm font-medium text-gray-700">Weight ({unit})</th>
                       <th className="text-left py-2 text-sm font-medium text-gray-700">RIR</th>
                       <th className="text-left py-2 text-sm font-medium text-gray-700">Volume</th>
                     </tr>
@@ -229,14 +231,14 @@ export default function WorkoutDetailPage() {
                       <tr key={set.id} className="border-b border-gray-100">
                         <td className="py-2 text-sm text-gray-900">{setIndex + 1}</td>
                         <td className="py-2 text-sm text-gray-900">{set.reps}</td>
-                        <td className="py-2 text-sm text-gray-900">{set.weight}</td>
+                        <td className="py-2 text-sm text-gray-900">{formatWeight(set.weight, 'kg').split(' ')[0]}</td>
                         <td className="py-2">
                           <span className={`px-2 py-1 rounded text-xs font-medium ${getRIRColor(set.rir)}`}>
                             {set.rir}
                           </span>
                         </td>
                         <td className="py-2 text-sm text-gray-900">
-                          {(set.reps * set.weight).toLocaleString()} lbs
+                          {formatWeight(set.reps * set.weight, 'kg')}
                         </td>
                       </tr>
                     ))}
@@ -252,9 +254,9 @@ export default function WorkoutDetailPage() {
                 </div>
                 <div className="text-center">
                   <div className="font-medium text-gray-900">
-                    {exercise.sets.reduce((sum, set) => sum + (set.reps * set.weight), 0).toLocaleString()}
+                    {formatWeight(exercise.sets.reduce((sum, set) => sum + (set.reps * set.weight), 0), 'kg').split(' ')[0]}
                   </div>
-                  <div className="text-gray-600">Volume (lbs)</div>
+                  <div className="text-gray-600">Volume ({unit})</div>
                 </div>
                 <div className="text-center">
                   <div className="font-medium text-gray-900">

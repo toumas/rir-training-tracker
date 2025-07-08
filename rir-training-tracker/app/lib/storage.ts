@@ -155,3 +155,18 @@ export const deleteCycle = (id: string): void => {
 export const getCycleById = (id: string): Cycle | undefined => {
   return getCycles().find(c => c.id === id);
 };
+
+// Generic storage functions for settings and other purposes
+export function saveToStorage<T>(key: string, value: T) {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+}
+
+export function getFromStorage(key: string) {
+  if (typeof window !== 'undefined') {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : null;
+  }
+  return null;
+}

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Settings from './Settings';
 
 export default function Header() {
   const pathname = usePathname();
@@ -22,7 +23,7 @@ export default function Header() {
             <span className="sm:hidden">RIR Tracker</span>
           </Link>
           
-          <nav className="flex-shrink-0">
+          <nav className="flex items-center space-x-4">
             <ul className="flex space-x-2 sm:space-x-6">
               {navLinks.map((link) => (
                 <li key={link.href}>
@@ -45,6 +46,7 @@ export default function Header() {
                 </li>
               ))}
             </ul>
+            <Settings />
           </nav>
         </div>
       </div>

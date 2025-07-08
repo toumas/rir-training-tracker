@@ -2,6 +2,7 @@
 
 import { Cycle, Workout } from '../lib/types';
 import { getWorkouts } from '../lib/storage';
+import { useWeightDisplay } from '../lib/unitConversion';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -41,6 +42,13 @@ interface WeeklyStats {
 
 export default function CycleAnalytics({ cycle }: CycleAnalyticsProps) {
   const allWorkouts = getWorkouts();
+  const { formatWeight, unit } = useWeightDisplay();
+
+  // Helper function to convert volume from kg to display unit
+  const displayVolume = (volumeInKg: number) => {
+    const formattedWeight = formatWeight(volumeInKg, 'kg');
+    return parseFloat(formattedWeight.split(' ')[0]);
+  };
 
   const getWorkoutsForCycle = (): { [key: string]: Workout[] } => {
     const cycleWorkouts: { [key: string]: Workout[] } = {};
@@ -114,8 +122,8 @@ export default function CycleAnalytics({ cycle }: CycleAnalyticsProps) {
     labels: weeklyStats.map(stat => stat.week),
     datasets: [
       {
-        label: 'Training Volume (lbs)',
-        data: weeklyStats.map(stat => stat.totalVolume),
+        label: `Training Volume (${unit})`,
+        data: weeklyStats.map(stat => displayVolume(stat.totalVolume)),
         borderColor: 'rgb(59, 130, 246)',
         baclbsroundColor: 'rgba(59, 130, 246, 0.1)',
         borderWidth: 2,
@@ -196,7 +204,7 @@ export default function CycleAnalytics({ cycle }: CycleAnalyticsProps) {
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-sm font-medium text-gray-500 mb-2">Total Volume</h3>
           <p className="text-3xl font-bold text-blue-600">
-            {totalStats.totalVolume.toLocaleString()} lbs
+            {displayVolume(totalStats.totalVolume).toLocaleString()} {unit}
           </p>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
@@ -251,7 +259,7 @@ export default function CycleAnalytics({ cycle }: CycleAnalyticsProps) {
                   Week
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Volume (lbs)
+                  Volume ({unit})
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Sets
@@ -274,7 +282,7 @@ export default function CycleAnalytics({ cycle }: CycleAnalyticsProps) {
                     {stat.week}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {stat.totalVolume.toLocaleString()}
+                    {displayVolume(stat.totalVolume).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {stat.totalSets}
@@ -286,7 +294,7 @@ export default function CycleAnalytics({ cycle }: CycleAnalyticsProps) {
                     {stat.avgRIR.toFixed(1)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {stat.avgWeight.toFixed(1)} lbs
+                    {formatWeight(stat.avgWeight, 'kg').split(' ')[0]} {unit}
                   </td>
                 </tr>
               ))}
@@ -337,9 +345,9 @@ export default function CycleAnalytics({ cycle }: CycleAnalyticsProps) {
                           {exercise.sets.map((set, setIndex) => (
                             <div key={set.id} className="bg-gray-100 border border-gray-300 p-3 rounded text-sm">
                               <span className="font-semibold text-gray-900">#{setIndex + 1}:</span>{' '}
-                              <span className="text-gray-900">{set.reps} × {set.weight}lbs @ {set.rir} RIR</span>
+                                <span className="text-gray-900">{set.reps} × {formatWeight(set.weight, 'kg').split(' ')[0]}{unit} @ {set.rir} RIR</span>
                               <div className="text-sm text-gray-700 mt-1">
-                                Vol: {(set.reps * set.weight).toLocaleString()}lbs
+                                Vol: {displayVolume(set.reps * set.weight).toLocaleString()}{unit}
                               </div>
                             </div>
                           ))}
@@ -348,7 +356,7 @@ export default function CycleAnalytics({ cycle }: CycleAnalyticsProps) {
                         {/* Exercise summary */}
                         <div className="mt-2 text-sm text-gray-800 font-medium">
                           Total: {exercise.sets.length} sets, {' '}
-                          {exercise.sets.reduce((sum, set) => sum + (set.reps * set.weight), 0).toLocaleString()}lbs volume
+                          {displayVolume(exercise.sets.reduce((sum, set) => sum + (set.reps * set.weight), 0)).toLocaleString()}{unit} volume
                         </div>
                       </div>
                     ))}

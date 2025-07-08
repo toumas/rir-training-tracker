@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Workout, Exercise, ExerciseSet, ExerciseTemplate } from '../lib/types';
 import { getExerciseTemplates, generateId, formatDate } from '../lib/storage';
+import { useWeightDisplay } from '../lib/unitConversion';
 import RIRGuide from './RIRGuide';
 
 interface WorkoutFormProps {
@@ -18,6 +19,13 @@ export default function WorkoutForm({ workout, onSave, onCancel }: WorkoutFormPr
   const [exercises, setExercises] = useState<Exercise[]>(workout?.exercises || []);
   const [exerciseTemplates, setExerciseTemplates] = useState<ExerciseTemplate[]>([]);
   const [showRIRGuide, setShowRIRGuide] = useState(false);
+  const { unit, parseWeightInput, formatWeight } = useWeightDisplay();
+
+  // Helper function to display weight in user's preferred unit
+  const displayWeight = (weightInKg: number) => {
+    const formattedWeight = formatWeight(weightInKg, 'kg');
+    return parseFloat(formattedWeight.split(' ')[0]);
+  };
 
   useEffect(() => {
     setExerciseTemplates(getExerciseTemplates());
@@ -72,12 +80,15 @@ export default function WorkoutForm({ workout, onSave, onCancel }: WorkoutFormPr
   };
 
   const updateSet = (exerciseId: string, setId: string, field: keyof ExerciseSet, value: number) => {
+    // Convert weight input to kg for storage if it's a weight field
+    const storageValue = field === 'weight' ? parseWeightInput(value.toString()) : value;
+    
     setExercises(exercises.map(exercise => 
       exercise.id === exerciseId 
         ? {
             ...exercise,
             sets: exercise.sets.map(set => 
-              set.id === setId ? { ...set, [field]: value } : set
+              set.id === setId ? { ...set, [field]: storageValue } : set
             )
           }
         : exercise
@@ -226,7 +237,7 @@ export default function WorkoutForm({ workout, onSave, onCancel }: WorkoutFormPr
                 <div className="grid grid-cols-5 gap-2 text-sm font-medium text-gray-700 px-2">
                   <div>Set</div>
                   <div>Reps</div>
-                  <div>Weight (lbs)</div>
+                  <div>Weight ({unit})</div>
                   <div>RIR</div>
                   <div></div>
                 </div>
@@ -245,7 +256,7 @@ export default function WorkoutForm({ workout, onSave, onCancel }: WorkoutFormPr
                     />
                     <input
                       type="number"
-                      value={set.weight}
+                      value={displayWeight(set.weight)}
                       onChange={(e) => updateSet(exercise.id, set.id, 'weight', parseFloat(e.target.value) || 0)}
                       min="0"
                       step="0.5"

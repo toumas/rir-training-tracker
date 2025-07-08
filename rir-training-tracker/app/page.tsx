@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Workout } from './lib/types';
 import { getWorkouts } from './lib/storage';
+import { useWeightDisplay } from './lib/unitConversion';
 
 export default function Dashboard() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
+  const { formatWeight, unit } = useWeightDisplay();
 
   useEffect(() => {
     const loadedWorkouts = getWorkouts();
@@ -30,13 +32,18 @@ export default function Dashboard() {
   };
 
   const getTotalVolume = () => {
-    return workouts.reduce((total, workout) => {
+    const totalVolumeInKg = workouts.reduce((total, workout) => {
       return total + workout.exercises.reduce((workoutTotal, exercise) => {
         return workoutTotal + exercise.sets.reduce((setTotal, set) => {
           return setTotal + (set.reps * set.weight);
         }, 0);
       }, 0);
     }, 0);
+    
+    // Convert from kg (stored format) to display format
+    const displayValue = formatWeight(totalVolumeInKg, 'kg');
+    // Extract just the numeric value for display
+    return parseFloat(displayValue.split(' ')[0]);
   };
 
   const getAverageRIR = (): number => {
@@ -178,7 +185,7 @@ export default function Dashboard() {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Volume</p>
                   <p className="text-2xl font-bold text-gray-900">{getTotalVolume().toLocaleString()}</p>
-                  <p className="text-xs text-gray-500">lbs lifted</p>
+                  <p className="text-xs text-gray-500">{unit} lifted</p>
                 </div>
                 <div className="text-purple-500 text-3xl">📈</div>
               </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Workout, Exercise, ExerciseSet, ExerciseTemplate, Cycle } from '../lib/types';
 import { getExerciseTemplates, generateId, formatDate, getWorkouts } from '../lib/storage';
+import { useWeightDisplay } from '../lib/unitConversion';
 import RIRGuide from './RIRGuide';
 
 interface CycleWorkoutFormProps {
@@ -31,6 +32,13 @@ export default function CycleWorkoutForm({ cycle, targetWeek, workout, onSave, o
   const [exerciseTemplates, setExerciseTemplates] = useState<ExerciseTemplate[]>([]);
   const [showRIRGuide, setShowRIRGuide] = useState(false);
   const [progressionData, setProgressionData] = useState<{ [exerciseName: string]: ExerciseProgression }>({});
+  const { unit, parseWeightInput, formatWeight } = useWeightDisplay();
+
+  // Helper function to display weight in user's preferred unit
+  const displayWeight = (weightInKg: number) => {
+    const formattedWeight = formatWeight(weightInKg, 'kg');
+    return parseFloat(formattedWeight.split(' ')[0]);
+  };
 
   useEffect(() => {
     setExerciseTemplates(getExerciseTemplates());
@@ -160,12 +168,15 @@ export default function CycleWorkoutForm({ cycle, targetWeek, workout, onSave, o
   };
 
   const updateSet = (exerciseId: string, setId: string, field: keyof ExerciseSet, value: number) => {
+    // Convert weight input to kg for storage if it's a weight field
+    const storageValue = field === 'weight' ? parseWeightInput(value.toString()) : value;
+    
     setExercises(exercises.map(exercise => 
       exercise.id === exerciseId 
         ? {
             ...exercise,
             sets: exercise.sets.map(set => 
-              set.id === setId ? { ...set, [field]: value } : set
+              set.id === setId ? { ...set, [field]: storageValue } : set
             )
           }
         : exercise
@@ -234,15 +245,15 @@ export default function CycleWorkoutForm({ cycle, targetWeek, workout, onSave, o
         <div className="space-y-1">
           {lastWeekData.sets.map((set, setIndex) => (
             <div key={setIndex} className="text-xs text-blue-800 ml-2">
-              #{setIndex + 1} {set.reps} × {set.weight}lbs @ {set.rir}
+              #{setIndex + 1} {set.reps} × {formatWeight(set.weight, 'kg').split(' ')[0]}{unit} @ {set.rir}
             </div>
           ))}
           <div className="text-xs text-blue-600 ml-2 mt-2">
-            Volume: {lastWeekData.totalVolume}lbs
+            Volume: {formatWeight(lastWeekData.totalVolume, 'kg')}
           </div>
         </div>
         <div className="mt-2 text-xs text-blue-700 break-words">
-          💡 Try: +2.5lbs or +1 rep with -0.5 RIR
+          💡 Try: +2.5{unit} or +1 rep with -0.5 RIR
         </div>
       </div>
     );
@@ -371,7 +382,7 @@ export default function CycleWorkoutForm({ cycle, targetWeek, workout, onSave, o
                 <div className="hidden sm:grid grid-cols-5 gap-2 text-sm font-medium text-gray-700 px-2">
                   <div>Set</div>
                   <div>Reps</div>
-                  <div>Weight (lbs)</div>
+                  <div>Weight ({unit})</div>
                   <div>RIR</div>
                   <div></div>
                 </div>
@@ -392,7 +403,7 @@ export default function CycleWorkoutForm({ cycle, targetWeek, workout, onSave, o
                       />
                       <input
                         type="number"
-                        value={set.weight}
+                        value={displayWeight(set.weight)}
                         onChange={(e) => updateSet(exercise.id, set.id, 'weight', parseFloat(e.target.value) || 0)}
                         min="0"
                         step="0.5"
@@ -442,10 +453,10 @@ export default function CycleWorkoutForm({ cycle, targetWeek, workout, onSave, o
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Weight (lbs)</label>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Weight ({unit})</label>
                           <input
                             type="number"
-                            value={set.weight}
+                            value={displayWeight(set.weight)}
                             onChange={(e) => updateSet(exercise.id, set.id, 'weight', parseFloat(e.target.value) || 0)}
                             min="0"
                             step="0.5"
