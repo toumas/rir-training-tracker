@@ -72,7 +72,7 @@ export const initialExercises: ExerciseTemplate[] = [
     instructions: 'Step forward into lunge position, lower back knee, push back to start'
   },
   {
-    id: 'leg press',
+    id: 'leg-press',
     name: 'Leg Press',
     muscleGroup: 'Legs',
     equipment: 'Leg Press Machine',
