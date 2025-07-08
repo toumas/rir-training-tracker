@@ -70,5 +70,19 @@ export const initialExercises: ExerciseTemplate[] = [
     muscleGroup: 'Legs',
     equipment: 'Bodyweight or Dumbbells',
     instructions: 'Step forward into lunge position, lower back knee, push back to start'
+  },
+  {
+    id: 'leg press',
+    name: 'Leg Press',
+    muscleGroup: 'Legs',
+    equipment: 'Leg Press Machine',
+    instructions: 'Sit on machine, place feet on platform, push away by extending legs'
+  },
+  {
+    id: 'calf-raises',
+    name: 'Calf Raises',
+    muscleGroup: 'Legs',
+    equipment: 'Leg Press Machine',
+    instructions: 'Sit on machine, place feet on platform, push away by extending legs'
   }
 ];
